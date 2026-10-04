@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: multi-tenant-saas-starter
+  main:
+	# Spring fetches this issuer's JWK set lazily on first JWT validation,
+	# independent of spring.main.lazy-initialization above - so a placeholder
+	# pool id won't fail startup even with eager init. It fails on the first
+	# authenticated request instead.
+    lazy-initialization: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Validates signature, expiry AND issuer. Boot resolves this lazily, so a
+          # placeholder pool id does not break startup - it only fails on first request.
+          issuer-uri: https://cognito-idp.${AWS_REGION:ap-southeast-2}.amazonaws.com/${COGNITO_USER_POOL_ID:REPLACE_ME}
+
+app:
+  dynamodb:
+    table-name: ${TABLE_NAME:saas_main}
+  billing:
+    # stub | stripe (stripe implementation not written yet)
+    provider: stub
